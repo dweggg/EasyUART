@@ -4,104 +4,86 @@
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="EClyNgpZT3kYvuIJdLgy-42" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;PC" style="rounded=0;whiteSpace=wrap;html=1;direction=north;fontSize=22;" vertex="1" parent="1">
+        
+        <!-- PC Element -->
+        <mxCell id="EClyNgpZT3kYvuIJdLgy-42" value="PC" style="rounded=0;whiteSpace=wrap;html=1;direction=north;fontSize=22;fillColor=#E0F7FA;" vertex="1" parent="1">
           <mxGeometry x="170" y="-240" width="180" height="310" as="geometry" />
         </mxCell>
-        <mxCell id="EClyNgpZT3kYvuIJdLgy-23" value="MCU / DSP&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;direction=north;fontSize=22;" vertex="1" parent="1">
+
+        <!-- MCU / DSP Element -->
+        <mxCell id="EClyNgpZT3kYvuIJdLgy-23" value="MCU / DSP" style="rounded=0;whiteSpace=wrap;html=1;direction=north;fontSize=22;fillColor=#FFEB3B;" vertex="1" parent="1">
           <mxGeometry x="500" y="-450" width="330" height="570" as="geometry" />
         </mxCell>
-        <mxCell id="EClyNgpZT3kYvuIJdLgy-38" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;Embedded program" style="rounded=0;whiteSpace=wrap;html=1;fontSize=18;" vertex="1" parent="1">
+
+        <!-- Embedded Program Element -->
+        <mxCell id="EClyNgpZT3kYvuIJdLgy-38" value="Embedded program" style="rounded=0;whiteSpace=wrap;html=1;fontSize=18;fillColor=#FFF9C4;" vertex="1" parent="1">
           <mxGeometry x="520" y="-290" width="300" height="400" as="geometry" />
         </mxCell>
-        <mxCell id="EClyNgpZT3kYvuIJdLgy-37" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;EasyUART GUI" style="rounded=0;whiteSpace=wrap;html=1;fontSize=18;" vertex="1" parent="1">
+
+        <!-- EasyUART GUI Element -->
+        <mxCell id="EClyNgpZT3kYvuIJdLgy-37" value="EasyUART GUI" style="rounded=0;whiteSpace=wrap;html=1;fontSize=18;fillColor=#FFCCBC;" vertex="1" parent="1">
           <mxGeometry x="190" y="-210" width="140" height="240" as="geometry" />
         </mxCell>
-        <mxCell id="EClyNgpZT3kYvuIJdLgy-1" value="&lt;div&gt;Other peripherals&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;direction=north;fontSize=22;" vertex="1" parent="1">
+
+        <!-- Other peripherals Element -->
+        <mxCell id="EClyNgpZT3kYvuIJdLgy-1" value="Other peripherals" style="rounded=0;whiteSpace=wrap;html=1;direction=north;fontSize=22;fillColor=#B2EBF2;" vertex="1" parent="1">
           <mxGeometry x="603.37" y="-400" width="200" height="80" as="geometry" />
         </mxCell>
+
+        <!-- RTOS or Baremetal Element -->
+        <mxCell id="EClyNgpZT3kYvuIJdLgy-3" value="RTOS or Baremetal" style="rounded=0;whiteSpace=wrap;html=1;direction=south;fontSize=18;fillColor=#B3E5FC;" vertex="1" parent="1">
+          <mxGeometry x="603.37" y="-210" width="200" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Application Element -->
+        <mxCell id="EClyNgpZT3kYvuIJdLgy-4" value="Application" style="rounded=0;whiteSpace=wrap;html=1;direction=south;fontSize=18;fillColor=#FFAB91;" vertex="1" parent="1">
+          <mxGeometry x="603.37" y="-140" width="200" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- UART Peripheral Element -->
+        <mxCell id="EClyNgpZT3kYvuIJdLgy-5" value="UART Peripheral" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;fillColor=#FFCCBC;" vertex="1" parent="1">
+          <mxGeometry x="533.37" y="-400" width="60" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- UART to USB Element -->
+        <mxCell id="EClyNgpZT3kYvuIJdLgy-6" value="UART to USB (e.g. CH340)" style="rounded=0;whiteSpace=wrap;html=1;fontSize=18;fillColor=#FFCCBC;" vertex="1" parent="1">
+          <mxGeometry x="200" y="-400" width="120" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- COM X Element -->
+        <mxCell id="EClyNgpZT3kYvuIJdLgy-7" value="COM X" style="rounded=0;whiteSpace=wrap;html=1;fontSize=18;fillColor=#FFCCBC;" vertex="1" parent="1">
+          <mxGeometry x="200" y="-240" width="120" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- EasyUART Interface Element -->
+        <mxCell id="EClyNgpZT3kYvuIJdLgy-8" value="EasyUART Interface" style="rounded=0;whiteSpace=wrap;html=1;fontSize=18;fillColor=#FFCCBC;" vertex="1" parent="1">
+          <mxGeometry x="200" y="-210" width="120" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- EasyUART Config Tool Element -->
+        <mxCell id="EClyNgpZT3kYvuIJdLgy-9" value="EasyUART Config Tool" style="rounded=0;whiteSpace=wrap;html=1;fontSize=18;fillColor=#FFCCBC;" vertex="1" parent="1">
+          <mxGeometry x="200" y="-90" width="120" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Connecting edges -->
         <mxCell id="EClyNgpZT3kYvuIJdLgy-31" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="EClyNgpZT3kYvuIJdLgy-3" target="EClyNgpZT3kYvuIJdLgy-24">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="EClyNgpZT3kYvuIJdLgy-3" value="RTOS or Baremetal" style="rounded=0;whiteSpace=wrap;html=1;direction=south;fontSize=18;" vertex="1" parent="1">
-          <mxGeometry x="603.37" y="-210" width="200" height="40" as="geometry" />
-        </mxCell>
-        <mxCell id="EClyNgpZT3kYvuIJdLgy-33" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="EClyNgpZT3kYvuIJdLgy-4" target="EClyNgpZT3kYvuIJdLgy-3">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="EClyNgpZT3kYvuIJdLgy-4" value="Application" style="rounded=0;whiteSpace=wrap;html=1;direction=south;fontSize=18;" vertex="1" parent="1">
-          <mxGeometry x="603.37" y="-140" width="200" height="80" as="geometry" />
-        </mxCell>
+        
         <mxCell id="EClyNgpZT3kYvuIJdLgy-35" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;endArrow=classic;endFill=1;startArrow=classic;startFill=1;" edge="1" parent="1" source="EClyNgpZT3kYvuIJdLgy-5" target="EClyNgpZT3kYvuIJdLgy-6">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="EClyNgpZT3kYvuIJdLgy-5" value="UART Peripheral" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="1">
-          <mxGeometry x="533.37" y="-400" width="60" height="80" as="geometry" />
-        </mxCell>
-        <mxCell id="EClyNgpZT3kYvuIJdLgy-6" value="UART to USB (e.g. CH340)" style="rounded=0;whiteSpace=wrap;html=1;fontSize=18;" vertex="1" parent="1">
-          <mxGeometry x="200" y="-400" width="120" height="80" as="geometry" />
-        </mxCell>
-        <mxCell id="EClyNgpZT3kYvuIJdLgy-7" value="COM X" style="rounded=0;whiteSpace=wrap;html=1;fontSize=18;" vertex="1" parent="1">
-          <mxGeometry x="200" y="-240" width="120" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="EClyNgpZT3kYvuIJdLgy-8" value="EasyUART Interface" style="rounded=0;whiteSpace=wrap;html=1;fontSize=18;" vertex="1" parent="1">
-          <mxGeometry x="200" y="-210" width="120" height="80" as="geometry" />
-        </mxCell>
-        <mxCell id="EClyNgpZT3kYvuIJdLgy-9" value="EasyUART Config Tool" style="rounded=0;whiteSpace=wrap;html=1;fontSize=18;" vertex="1" parent="1">
-          <mxGeometry x="200" y="-90" width="120" height="80" as="geometry" />
-        </mxCell>
-        <mxCell id="EClyNgpZT3kYvuIJdLgy-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;endArrow=classic;endFill=1;startArrow=classic;startFill=1;" edge="1" parent="1" source="EClyNgpZT3kYvuIJdLgy-2" target="EClyNgpZT3kYvuIJdLgy-5">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
+
         <mxCell id="EClyNgpZT3kYvuIJdLgy-15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endArrow=classic;endFill=1;startArrow=classic;startFill=1;" edge="1" parent="1" source="EClyNgpZT3kYvuIJdLgy-6" target="EClyNgpZT3kYvuIJdLgy-7">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="EClyNgpZT3kYvuIJdLgy-17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startArrow=classic;startFill=1;endArrow=none;endFill=0;" edge="1" parent="1" source="EClyNgpZT3kYvuIJdLgy-8" target="EClyNgpZT3kYvuIJdLgy-9">
+
+        <mxCell id="EClyNgpZT3kYvuIJdLgy-17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endArrow=classic;endFill=1;startArrow=classic;startFill=1;" edge="1" parent="1" source="EClyNgpZT3kYvuIJdLgy-7" target="EClyNgpZT3kYvuIJdLgy-4">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="EClyNgpZT3kYvuIJdLgy-19" style="shape=line;" edge="1" parent="1" source="EClyNgpZT3kYvuIJdLgy-2">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="209.53488372093034" y="50" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="EClyNgpZT3kYvuIJdLgy-22" value="" style="shape=line;" edge="1" parent="1" source="EClyNgpZT3kYvuIJdLgy-1" target="EClyNgpZT3kYvuIJdLgy-2">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="654.37" y="-280" as="sourcePoint" />
-            <mxPoint x="492.90488372093034" y="50" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="EClyNgpZT3kYvuIJdLgy-2" value="UART Driver" style="rounded=0;whiteSpace=wrap;html=1;direction=south;fontSize=16;" vertex="1" parent="1">
-          <mxGeometry x="533.37" y="-280" width="60" height="40" as="geometry" />
-        </mxCell>
-        <mxCell id="EClyNgpZT3kYvuIJdLgy-32" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="EClyNgpZT3kYvuIJdLgy-24" target="EClyNgpZT3kYvuIJdLgy-1">
+
+        <mxCell id="EClyNgpZT3kYvuIJdLgy-22" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endArrow=classic;endFill=1;startArrow=classic;startFill=1;" edge="1" parent="1" source="EClyNgpZT3kYvuIJdLgy-4" target="EClyNgpZT3kYvuIJdLgy-3">
           <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="EClyNgpZT3kYvuIJdLgy-24" value="Other drivers / HAL" style="rounded=0;whiteSpace=wrap;html=1;direction=south;fontSize=18;" vertex="1" parent="1">
-          <mxGeometry x="603.37" y="-280" width="200" height="40" as="geometry" />
-        </mxCell>
-        <mxCell id="EClyNgpZT3kYvuIJdLgy-30" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1.007;exitY=0.11;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;endArrow=classic;endFill=1;startArrow=classic;startFill=1;" edge="1" parent="1" source="EClyNgpZT3kYvuIJdLgy-28" target="EClyNgpZT3kYvuIJdLgy-2">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="EClyNgpZT3kYvuIJdLgy-28" value="" style="shape=corner;whiteSpace=wrap;html=1;rotation=-90;dx=103;dy=56;" vertex="1" parent="1">
-          <mxGeometry x="530" y="-205.8" width="279.85" height="273.63" as="geometry" />
-        </mxCell>
-        <mxCell id="EClyNgpZT3kYvuIJdLgy-29" value="EasyUART" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontStyle=1;fontSize=22;" vertex="1" parent="1">
-          <mxGeometry x="604.9300000000001" y="-10" width="130" height="40" as="geometry" />
-        </mxCell>
-        <mxCell id="EClyNgpZT3kYvuIJdLgy-34" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0;entryDx=103;entryDy=164.815;entryPerimeter=0;endArrow=classic;endFill=1;startArrow=classic;startFill=1;" edge="1" parent="1" source="EClyNgpZT3kYvuIJdLgy-4" target="EClyNgpZT3kYvuIJdLgy-28">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="697.37" y="-40" />
-              <mxPoint x="698.37" y="-40" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="EClyNgpZT3kYvuIJdLgy-39" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="EClyNgpZT3kYvuIJdLgy-9" target="EClyNgpZT3kYvuIJdLgy-28">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="EClyNgpZT3kYvuIJdLgy-43" value="Code generation" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="EClyNgpZT3kYvuIJdLgy-39">
-          <mxGeometry x="-0.2157" y="-1" relative="1" as="geometry">
-            <mxPoint x="9" y="-11" as="offset" />
-          </mxGeometry>
         </mxCell>
       </root>
     </mxGraphModel>
