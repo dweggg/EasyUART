@@ -1,31 +1,15 @@
+// EasyUART.c
 #include "EasyUART.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <string.h> // For memcpy
+#include <stdlib.h> // For malloc/free
 
-// Static variable database
-static VariableMetaData variable_database[MAX_VARIABLES] = {
-    { VARIABLE_1_ID, TYPE_INT, 100, 0 },  // Transmission every 100us
-    { VARIABLE_2_ID, TYPE_FLOAT, 200, 0 }, // Transmission every 200us
-    // Add more variables
-};
+// Static instance of the EasyUART handle
+static EasyUART_HandleTypeDef easyuart_handle;
 
-// Send queue (FIFO)
-static QueueEntry send_queue[MAX_QUEUE_SIZE];
-static int queue_head = 0;
-static int queue_tail = 0;
-
-// Buffer for received variables (most recent value received per variable)
-static void* received_values[MAX_VARIABLES];
-
-// Pointers to UART and Timer handles
-static UART_HandleTypeDef* huart_global;
-static TIM_HandleTypeDef* htim_global;
-
-// Function to get the current time in microseconds
-uint32_t get_current_time_us(void) {
-    return __HAL_TIM_GET_COUNTER(htim_global);
-}
+// Helper functions
+static void EasyUART_TransmitPacket(EasyUART_Speed speed);
+static uint8_t EasyUART_CalculateChecksum(uint8_t *data, uint16_t length);
+static uint32_t EasyUART_GetTimestamp();
 
 // Initialize UART
 static void setup_UART(UART_HandleTypeDef* huart) {
@@ -43,10 +27,8 @@ static void setup_UART(UART_HandleTypeDef* huart) {
 }
 
 // Initialize Timer for microsecond counting
-static void setup_Timer(TIM_HandleTypeDef* htim) {
-    // Enable the clock for the timer (user should ensure the correct clock is enabled)
-    // e.g., if using TIM2, then __HAL_RCC_TIM2_CLK_ENABLE();
-    
+static void setup_timer(TIM_HandleTypeDef* htim) {
+
     // Configure timer to count in microseconds
     htim->Init.Prescaler = (HAL_RCC_GetPCLK1Freq() / 1000000) - 1; // Prescaler for 1us
     htim->Init.CounterMode = TIM_COUNTERMODE_UP;
@@ -61,134 +43,85 @@ static void setup_Timer(TIM_HandleTypeDef* htim) {
     HAL_TIM_Base_Start(htim);  // Start the timer
 }
 
-// Initialize UART and Timer peripherals, allowing user-defined configurations
-void init_EasyUART(UART_HandleTypeDef* huart, TIM_HandleTypeDef* htim) {
-    // Store the UART and Timer handles globally
-    huart_global = huart;
-    htim_global = htim;
+// Initialize EasyUART with UART and Timer handles
+void init_EasyUART(UART_HandleTypeDef *huart, TIM_HandleTypeDef *htim) {
+    easyuart_handle.uart = huart;
+    easyuart_handle.timer = htim;
 
-    // Reinitialize UART peripheral to ensure correct configuration
-    setup_UART(huart_global);
+    setup_UART(huart);
+    setup_timer(htim);
 
-    // Reinitialize Timer peripheral to ensure it counts in microseconds
-    setup_Timer(htim_global);
-
-    // Initialize memory
-    memset(send_queue, 0, sizeof(send_queue));
-    memset(received_values, 0, sizeof(received_values));
+    easyuart_handle.intervals[EASYUART_VERY_FAST] = EASYUART_VERY_FAST_INTERVAL;
+    easyuart_handle.intervals[EASYUART_FAST] = EASYUART_FAST_INTERVAL;
+    easyuart_handle.intervals[EASYUART_SLOW] = EASYUART_SLOW_INTERVAL;
+    memset(easyuart_handle.last_sent_times, 0, sizeof(easyuart_handle.last_sent_times));
+    memset(easyuart_handle.queues, 0, sizeof(easyuart_handle.queues));
+    memset(easyuart_handle.queue_sizes, 0, sizeof(easyuart_handle.queue_sizes));
 }
 
-// Add a variable to the send queue
-int send_EasyUART(void* variable, VariableID id) {
-    if (id < 0 || id >= VARIABLE_ID_COUNT) {
-        return -1; // Invalid variable ID
-    }
-    
-    // Enqueue the variable for transmission
-    if ((queue_tail + 1) % MAX_QUEUE_SIZE == queue_head) {
-        return -2; // Error: Queue is full
-    }
-
-    QueueEntry* entry = &send_queue[queue_tail];
-    entry->id = id;
-
-    // Allocate memory and copy the variable data
-    VariableMetaData meta = variable_database[id];
-    switch (meta.type) {
-        case TYPE_INT:
-            entry->data = malloc(sizeof(int));
-            memcpy(entry->data, variable, sizeof(int));
-            break;
-
-        case TYPE_FLOAT:
-            entry->data = malloc(sizeof(float));
-            memcpy(entry->data, variable, sizeof(float));
-            break;
-
-        case TYPE_STRING:
-            entry->data = malloc(strlen((char*)variable) + 1);
-            strcpy((char*)entry->data, (char*)variable);
-            break;
-
-        default:
-            return -3; // Unsupported data type
-    }
-
-    queue_tail = (queue_tail + 1) % MAX_QUEUE_SIZE;
-    return 0; // Success
+// Queue a variable for transmission
+void send_EasyUART(void *variable, uint8_t variable_id, uint8_t data_size, EasyUART_Speed speed) {
+    EasyUART_Variable var = { variable_id, malloc(data_size), data_size };
+    memcpy(var.data, variable, data_size);
+    easyuart_handle.queues[speed][easyuart_handle.queue_sizes[speed]++] = var;
 }
 
-// Run the EasyUART main loop, handling transmission and reception
-void run_EasyUART(void) {
-    uint32_t current_time = get_current_time_us();
-
-    // 1. Process send queue
-    for (int i = queue_head; i != queue_tail; i = (i + 1) % MAX_QUEUE_SIZE) {
-        QueueEntry* entry = &send_queue[i];
-        VariableMetaData* meta = &variable_database[entry->id];
-
-        // Check if it's time to send this variable
-        if (current_time - meta->last_transmission_time >= meta->transmission_speed_us) {
-            // Send the variable over UART
-            switch (meta->type) {
-                case TYPE_INT:
-                    HAL_UART_Transmit(huart_global, (uint8_t*)entry->data, sizeof(int), HAL_MAX_DELAY);
-                    break;
-                
-                case TYPE_FLOAT:
-                    HAL_UART_Transmit(huart_global, (uint8_t*)entry->data, sizeof(float), HAL_MAX_DELAY);
-                    break;
-
-                case TYPE_STRING:
-                    HAL_UART_Transmit(huart_global, (uint8_t*)entry->data, strlen((char*)entry->data), HAL_MAX_DELAY);
-                    break;
-
-                default:
-                    break; // Unsupported type
-            }
-
-            // Update the last transmission time
-            meta->last_transmission_time = current_time;
-
-            // Remove from queue
-            free(entry->data); // Free allocated memory
-            queue_head = (queue_head + 1) % MAX_QUEUE_SIZE;
+// Main function to manage transmission based on intervals
+void run_EasyUART() {
+    uint32_t current_time = EasyUART_GetTimestamp();
+    for (EasyUART_Speed speed = EASYUART_VERY_FAST; speed < EASYUART_SPEED_COUNT; speed++) {
+        if ((current_time - easyuart_handle.last_sent_times[speed]) >= easyuart_handle.intervals[speed]) {
+            EasyUART_TransmitPacket(speed);
+            easyuart_handle.last_sent_times[speed] = current_time;
         }
     }
-
-    // 2. Handle reception (Example code, modify based on platform)
-    uint8_t received_data[4]; // Adjust size based on expected data types
-    if (HAL_UART_Receive(huart_global, received_data, sizeof(received_data), 0) == HAL_OK) {
-        // Here we would typically parse the received data
-        // For simplicity, assume we are receiving data in the format of an integer
-        int receivedInt = *(int*)received_data;
-        received_values[VARIABLE_1_ID] = malloc(sizeof(int));
-        *(int*)received_values[VARIABLE_1_ID] = receivedInt; // Store the received integer
-
-        // If we had more variable types, we would parse accordingly
-    }
 }
 
+// Transmit a packet for a given speed
+static void EasyUART_TransmitPacket(EasyUART_Speed speed) {
+    uint8_t packet[256];
+    uint8_t idx = 0;
+    uint16_t packet_size = 2 + 4 + (easyuart_handle.queue_sizes[speed] * 2); // Start + End + Timestamp + data
 
-// Read the last received value of a variable
-void* read_EasyUART(VariableID id) {
-    if (id < 0 || id >= VARIABLE_ID_COUNT) {
-        return NULL; // Invalid variable ID
+    // Start of frame
+    packet[idx++] = EASYUART_START_BYTE;
+    packet[idx++] = packet_size;
+
+    // Timestamp
+    uint32_t timestamp = EasyUART_GetTimestamp();
+    memcpy(&packet[idx], &timestamp, sizeof(timestamp));
+    idx += sizeof(timestamp);
+
+    // Variable data
+    for (int i = 0; i < easyuart_handle.queue_sizes[speed]; i++) {
+        EasyUART_Variable var = easyuart_handle.queues[speed][i];
+        packet[idx++] = var.id;
+        memcpy(&packet[idx], var.data, var.data_size);
+        idx += var.data_size;
+        free(var.data);  // Free memory after transmission
     }
-    
-    // Return a pointer to the most recently received value
-    void* received_value = received_values[id];
-    if (received_value != NULL) {
-        // Allocate memory for return value based on type
-        void* return_value = malloc(sizeof(received_value)); // Allocate memory for return
-        if (return_value == NULL) {
-            return NULL; // Memory allocation failed
-        }
 
-        // Copy the received value to the allocated memory
-        memcpy(return_value, received_value, sizeof(received_value));
-        return return_value; // Return pointer to allocated memory
+    // Checksum
+    packet[idx++] = EasyUART_CalculateChecksum(packet, idx);
+
+    // End of frame
+    packet[idx++] = EASYUART_END_BYTE;
+
+    // Send the packet over UART
+    HAL_UART_Transmit(easyuart_handle.uart, packet, idx, HAL_MAX_DELAY);
+    easyuart_handle.queue_sizes[speed] = 0; // Clear queue
+}
+
+// Calculate checksum
+static uint8_t EasyUART_CalculateChecksum(uint8_t *data, uint16_t length) {
+    uint8_t checksum = 0;
+    for (uint16_t i = 0; i < length; i++) {
+        checksum ^= data[i];
     }
+    return checksum;
+}
 
-    return NULL; // No value received
+// Get current timestamp from timer
+static uint32_t EasyUART_GetTimestamp() {
+    return __HAL_TIM_GET_COUNTER(easyuart_handle.timer);
 }
