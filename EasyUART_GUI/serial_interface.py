@@ -2,8 +2,7 @@ import serial
 import serial.tools.list_ports
 
 class SerialInterface:
-    def __init__(self, gui):
-        self.gui = gui
+    def __init__(self):
         self.serial_port = None
 
     def list_ports(self):

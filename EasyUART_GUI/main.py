@@ -1,7 +1,8 @@
+from PyQt5 import QtWidgets
 from gui import EasyUARTApp
-import tkinter as tk
 
 if __name__ == "__main__":
-    root = tk.Tk()
-    app = EasyUARTApp(root)
-    root.mainloop()
+    app = QtWidgets.QApplication([])
+    window = EasyUARTApp()
+    window.show()
+    app.exec_()

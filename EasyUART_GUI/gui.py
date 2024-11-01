@@ -1,152 +1,154 @@
-import tkinter as tk
-from tkinter import ttk
-import threading
+from PyQt5 import QtWidgets, QtCore, QtGui
+import pyqtgraph as pg
 from serial_interface import SerialInterface
-from database import Database  # Import your database management class
+from database import Database
+import threading
 
-class EasyUARTApp:
-    def __init__(self, root):
-        self.root = root
-        self.root.title("EasyUART - Serial Port GUI")
-        self.root.geometry("600x550")
+class EasyUARTApp(QtWidgets.QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("EasyUART - Serial Port GUI")
+        self.setGeometry(100, 100, 1000, 600)
 
-        # Create Notebook (Tabs)
-        self.notebook = ttk.Notebook(root)
-        self.notebook.pack(fill='both', expand=True)
+        # Main widget and layout
+        main_widget = QtWidgets.QWidget()
+        self.setCentralWidget(main_widget)
+        layout = QtWidgets.QVBoxLayout()
+        main_widget.setLayout(layout)
 
-        # Create Serial Interface Page
-        self.serial_frame = ttk.Frame(self.notebook)
-        self.notebook.add(self.serial_frame, text="Serial Interface")
+        # Tab widget
+        self.tabs = QtWidgets.QTabWidget()
+        layout.addWidget(self.tabs)
 
-        # Create Database Editor Page
-        self.database_frame = ttk.Frame(self.notebook)
-        self.notebook.add(self.database_frame, text="Database Editor")
+        # Serial Interface and Database Editor tabs
+        self.serial_tab = QtWidgets.QWidget()
+        self.database_tab = QtWidgets.QWidget()
+        self.tabs.addTab(self.serial_tab, "Serial Interface")
+        self.tabs.addTab(self.database_tab, "Database Editor")
 
         # Initialize Serial Interface
-        self.serial_interface = SerialInterface(self)  # Initialize the serial interface
-        self.create_serial_interface()
-        self.create_database_editor()
+        self.serial_interface = SerialInterface()
+        self.init_serial_interface()
+        
+        # Initialize Database Editor
+        self.database = Database()
+        self.init_database_editor()
 
-    def create_serial_interface(self):
-        # Frame for Serial Port settings
-        self.port_frame = ttk.LabelFrame(self.serial_frame, text="Serial Port Settings", padding=(10, 10))
-        self.port_frame.grid(column=0, row=0, padx=10, pady=10, sticky="ew")
+    def init_serial_interface(self):
+        serial_layout = QtWidgets.QVBoxLayout(self.serial_tab)
 
-        # Port selection
-        self.port_label = ttk.Label(self.port_frame, text="Select Port:")
-        self.port_label.grid(column=0, row=0, sticky="w")
+        # Serial Port Settings
+        port_frame = QtWidgets.QGroupBox("Serial Port Settings")
+        serial_layout.addWidget(port_frame)
+        port_layout = QtWidgets.QFormLayout(port_frame)
+        
+        self.port_combobox = QtWidgets.QComboBox()
+        self.port_combobox.addItems(self.serial_interface.list_ports())
+        self.baud_combobox = QtWidgets.QComboBox()
+        self.baud_combobox.addItems(["9600", "115200", "19200"])
+        
+        port_layout.addRow("Select Port:", self.port_combobox)
+        port_layout.addRow("Baud Rate:", self.baud_combobox)
 
-        self.port_combobox = ttk.Combobox(self.port_frame, state='readonly', width=20)
-        self.port_combobox.grid(column=1, row=0)
+        # Connect button
+        self.connect_button = QtWidgets.QPushButton("Connect")
+        self.connect_button.clicked.connect(self.connect_serial)
+        serial_layout.addWidget(self.connect_button)
+        
+        # Serial data display
+        self.serial_text_area = QtWidgets.QTextEdit()
+        self.serial_text_area.setReadOnly(True)
+        serial_layout.addWidget(self.serial_text_area)
 
-        # Baud rate selection
-        self.baud_label = ttk.Label(self.port_frame, text="Baud Rate:")
-        self.baud_label.grid(column=0, row=1, sticky="w")
-
-        self.baud_combobox = ttk.Combobox(self.port_frame, state='readonly', values=[9600, 115200, 19200], width=20)
-        self.baud_combobox.grid(column=1, row=1)
-        self.baud_combobox.current(0)  # Default to 9600
-
-        # Open/Close Button
-        self.connect_button = ttk.Button(self.port_frame, text="Connect", command=self.connect)
-        self.connect_button.grid(column=0, row=2, columnspan=2, pady=(5, 0))
-
-        # Text area for communication
-        self.text_area = tk.Text(self.serial_frame, wrap='word', height=15, width=70)
-        self.text_area.grid(column=0, row=1, padx=10, pady=10)
-
-        # Send data entry
-        self.send_entry = ttk.Entry(self.serial_frame, width=60)
-        self.send_entry.grid(column=0, row=2, padx=10, pady=5)
-
-        self.send_button = ttk.Button(self.serial_frame, text="Send", command=self.send_data)
-        self.send_button.grid(column=0, row=3, padx=10, pady=(5, 10))
+        # Send data
+        self.send_entry = QtWidgets.QLineEdit()
+        self.send_button = QtWidgets.QPushButton("Send")
+        self.send_button.clicked.connect(self.send_data)
+        serial_layout.addWidget(self.send_entry)
+        serial_layout.addWidget(self.send_button)
 
         # Status Bar
-        self.status_bar = ttk.Label(self.serial_frame, text="Status: Disconnected", relief=tk.SUNKEN, anchor='w')
-        self.status_bar.grid(column=0, row=4, sticky="ew", padx=10)
+        self.status_bar = QtWidgets.QLabel("Status: Disconnected")
+        serial_layout.addWidget(self.status_bar)
+        
+        # Plot widget for live data
+        self.plot_widget = pg.GraphicsLayoutWidget()
+        self.plot_widget.setBackground('black')
+        self.plot = self.plot_widget.addPlot(title="Real-Time Plot")
+        self.curve = self.plot.plot(pen='y')
+        self.plot.showGrid(x=True, y=True)
+        self.plot.setLabel('left', 'Value')
+        self.plot.setLabel('bottom', 'Time')
+        serial_layout.addWidget(self.plot_widget)
 
-        self.update_ports()  # Populate the combobox with available ports
+        # Set up data for plotting
+        self.plot_data = [0] * 100
+        self.plot_timer = QtCore.QTimer()
+        self.plot_timer.timeout.connect(self.update_plot)
+        self.plot_timer.start(100)
 
-    def create_database_editor(self):
-        # Frame for Database settings
-        self.db_frame = ttk.LabelFrame(self.database_frame, text="Database Variables", padding=(10, 10))
-        self.db_frame.grid(column=0, row=0, padx=10, pady=10, sticky="ew")
+    def init_database_editor(self):
+        db_layout = QtWidgets.QVBoxLayout(self.database_tab)
 
-        # Variable Name Entry
-        self.var_name_label = ttk.Label(self.db_frame, text="Variable Name:")
-        self.var_name_label.grid(column=0, row=0, sticky="w")
+        # Variable entry form
+        var_form = QtWidgets.QFormLayout()
+        self.var_name_entry = QtWidgets.QLineEdit()
+        self.db_baud_combobox = QtWidgets.QComboBox()
+        self.db_baud_combobox.addItems(["9600", "115200", "19200"])
+        self.data_type_combobox = QtWidgets.QComboBox()
+        self.data_type_combobox.addItems(["int", "float", "string"])
+        
+        var_form.addRow("Variable Name:", self.var_name_entry)
+        var_form.addRow("Baud Rate:", self.db_baud_combobox)
+        var_form.addRow("Data Type:", self.data_type_combobox)
+        db_layout.addLayout(var_form)
 
-        self.var_name_entry = ttk.Entry(self.db_frame, width=30)
-        self.var_name_entry.grid(column=1, row=0, padx=5, pady=5)
+        # Add variable button
+        self.add_variable_button = QtWidgets.QPushButton("Add Variable")
+        self.add_variable_button.clicked.connect(self.add_variable)
+        db_layout.addWidget(self.add_variable_button)
 
-        # Baud Rate Selection for Database
-        self.db_baud_label = ttk.Label(self.db_frame, text="Baud Rate:")
-        self.db_baud_label.grid(column=0, row=1, sticky="w")
+        # List of variables
+        self.variable_list = QtWidgets.QListWidget()
+        db_layout.addWidget(self.variable_list)
 
-        self.db_baud_combobox = ttk.Combobox(self.db_frame, state='readonly', values=[9600, 115200, 19200], width=20)
-        self.db_baud_combobox.grid(column=1, row=1)
-        self.db_baud_combobox.current(0)  # Default to 9600
-
-        # Data Type Selection
-        self.data_type_label = ttk.Label(self.db_frame, text="Data Type:")
-        self.data_type_label.grid(column=0, row=2, sticky="w")
-
-        self.data_type_combobox = ttk.Combobox(self.db_frame, state='readonly', values=["int", "float", "string"], width=20)
-        self.data_type_combobox.grid(column=1, row=2)
-        self.data_type_combobox.current(0)  # Default to int
-
-        # Add Variable Button
-        self.add_variable_button = ttk.Button(self.db_frame, text="Add Variable", command=self.add_variable)
-        self.add_variable_button.grid(column=0, row=3, columnspan=2, pady=(5, 0))
-
-        # Listbox to show added variables
-        self.variable_listbox = tk.Listbox(self.database_frame, height=10, width=70)
-        self.variable_listbox.grid(column=0, row=1, padx=10, pady=10)
-
-        # Initialize the Database
-        self.database = Database()
-
-    def update_ports(self):
-        self.port_combobox['values'] = self.serial_interface.list_ports()
-        if self.serial_interface.list_ports():
-            self.port_combobox.current(0)  # Select the first port
-
-    def connect(self):
+    def connect_serial(self):
         if self.serial_interface.is_connected():
             self.serial_interface.disconnect()
-            self.connect_button.config(text="Connect")
-            self.status_bar.config(text="Status: Disconnected")
+            self.connect_button.setText("Connect")
+            self.status_bar.setText("Status: Disconnected")
         else:
-            port = self.port_combobox.get()
-            baudrate = int(self.baud_combobox.get())
+            port = self.port_combobox.currentText()
+            baudrate = int(self.baud_combobox.currentText())
             self.serial_interface.connect(port, baudrate)
-            self.connect_button.config(text="Disconnect")
-            self.status_bar.config(text=f"Status: Connected to {port} at {baudrate} baud")
+            self.connect_button.setText("Disconnect")
+            self.status_bar.setText(f"Status: Connected to {port} at {baudrate} baud")
             threading.Thread(target=self.read_serial, daemon=True).start()
 
     def read_serial(self):
         while self.serial_interface.is_connected():
             data = self.serial_interface.read()
             if data:
-                self.text_area.insert(tk.END, f"Received: {data}\n")
-                self.text_area.see(tk.END)
+                self.serial_text_area.append(f"Received: {data}")
+                self.serial_text_area.moveCursor(QtGui.QTextCursor.End)
 
     def send_data(self):
         if self.serial_interface.is_connected():
-            data = self.send_entry.get()
+            data = self.send_entry.text()
             self.serial_interface.write(data.encode('utf-8'))
-            self.text_area.insert(tk.END, f"Sent: {data}\n")
-            self.send_entry.delete(0, tk.END)
+            self.serial_text_area.append(f"Sent: {data}")
+            self.send_entry.clear()
 
     def add_variable(self):
-        variable_name = self.var_name_entry.get()
-        baud_rate = int(self.db_baud_combobox.get())
-        data_type = self.data_type_combobox.get()
+        var_name = self.var_name_entry.text()
+        baud_rate = int(self.db_baud_combobox.currentText())
+        data_type = self.data_type_combobox.currentText()
 
-        if variable_name:
-            self.database.add_variable(variable_name, baud_rate, data_type)
-            self.variable_listbox.insert(tk.END, f"{variable_name} - {baud_rate} - {data_type}")
-            self.var_name_entry.delete(0, tk.END)  # Clear the entry after adding
-        else:
-            print("Variable name cannot be empty.")
+        if var_name:
+            self.database.add_variable(var_name, baud_rate, data_type)
+            self.variable_list.addItem(f"{var_name} - {baud_rate} - {data_type}")
+            self.var_name_entry.clear()
+
+    def update_plot(self):
+        # Simulating real-time data; replace with actual data source
+        self.curve.setData(self.plot_data)
