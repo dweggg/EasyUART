@@ -6,7 +6,7 @@
 #include <stdbool.h>
 
 #define MAX_DATA_SIZE  sizeof(float) // Adjust if you plan to support larger data types
-
+#define EasyUART_BaudRate 115200
 typedef enum {
     TYPE_NONE,
     TYPE_INT,

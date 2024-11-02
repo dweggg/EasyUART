@@ -64,8 +64,10 @@ void configureMicrosecondTimer(TIM_HandleTypeDef *htim) {
 
 void init_EasyUART(UART_HandleTypeDef *huart, TIM_HandleTypeDef *htim) {
     huart_EasyUART = huart;
-    htim_EasyUART = htim;
+    huart_EasyUART->Init.BaudRate = EasyUART_BaudRate;
+    HAL_UART_Init(huart_EasyUART);
 
+    htim_EasyUART = htim;
     configureMicrosecondTimer(htim_EasyUART);
 }
 

@@ -1,6 +1,7 @@
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtCore import pyqtSignal
 import pyqtgraph as pg
+import qdarktheme  # Import the theme
 from serial_interface import SerialInterface
 from database import Database
 import threading
@@ -13,6 +14,7 @@ class EasyUARTApp(QtWidgets.QMainWindow):
         super().__init__()
         self.setWindowTitle("EasyUART - Serial Port GUI")
         self.setGeometry(100, 100, 1000, 600)
+        qdarktheme.setup_theme()
 
         # Connect the data_received_signal to the slot to update the GUI
         self.data_received_signal.connect(self.update_serial_text_area)
