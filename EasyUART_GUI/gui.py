@@ -41,11 +41,10 @@ class EasyUARTApp(QtWidgets.QMainWindow):
 
         # Initialize Database Editor
         self.database = Database()
-        # self.init_database_editor()
 
         # Plotting related data
-        self.plot_data = [0] * 100
-        self.last_plot_time = 0
+        self.plot_data_id1 = [0] * 100  # Store data for ID 1
+        self.plot_data_id2 = [0] * 100  # Store data for ID 2
 
     def init_serial_interface(self):
         serial_layout = QtWidgets.QVBoxLayout(self.serial_tab)
@@ -88,7 +87,8 @@ class EasyUARTApp(QtWidgets.QMainWindow):
         self.plot_widget = pg.GraphicsLayoutWidget()
         self.plot_widget.setBackground('black')
         self.plot = self.plot_widget.addPlot(title="Real-Time Plot")
-        self.curve = self.plot.plot(pen='y')
+        self.curve_id1 = self.plot.plot(pen='y')  # Yellow for ID 1
+        self.curve_id2 = self.plot.plot(pen='c')  # Cyan for ID 2
         self.plot.showGrid(x=True, y=True)
         self.plot.setLabel('left', 'Value')
         self.plot.setLabel('bottom', 'Time')
@@ -128,22 +128,31 @@ class EasyUARTApp(QtWidgets.QMainWindow):
         self.extract_and_plot_value(text)
 
     def extract_and_plot_value(self, decoded_message):
-        """Extract value from the decoded message and update plot data."""
+        """Extract values from the decoded message and update plot data for both IDs."""
         try:
             lines = decoded_message.strip().split("\n")
             for line in lines:
-                if "ID: 2" in line:  # Check for the specific ID
-                    value_str = line.split("|")[-1].split(":")[-1].strip()  # Extract the float value
+                if "ID: 1" in line:  # Check for ID 1
+                    value_str = line.split("|")[-1].split(":")[-1].strip()
                     value = float(value_str)
-                    self.update_plot_data(value)  # Update plot with new value
+                    self.update_plot_data(value, id=1)  # Update plot for ID 1
+                elif "ID: 2" in line:  # Check for ID 2
+                    value_str = line.split("|")[-1].split(":")[-1].strip()
+                    value = float(value_str)
+                    self.update_plot_data(value, id=2)  # Update plot for ID 2
         except (ValueError, IndexError) as e:
             print(f"Error extracting value: {e}")
 
-    def update_plot_data(self, value):
-        """Update the data for plotting."""
-        self.plot_data.append(value)
-        if len(self.plot_data) > 100:
-            self.plot_data.pop(0)  # Keep the last 100 data points
+    def update_plot_data(self, value, id):
+        """Update the data for plotting, for a specific ID."""
+        if id == 1:
+            self.plot_data_id1.append(value)
+            if len(self.plot_data_id1) > 100:
+                self.plot_data_id1.pop(0)  # Keep the last 100 data points for ID 1
+        elif id == 2:
+            self.plot_data_id2.append(value)
+            if len(self.plot_data_id2) > 100:
+                self.plot_data_id2.pop(0)  # Keep the last 100 data points for ID 2
 
     def send_data(self):
         if self.serial_interface.is_connected():
@@ -153,6 +162,8 @@ class EasyUARTApp(QtWidgets.QMainWindow):
             self.send_entry.clear()
 
     def update_plot(self):
-        """Update the plot with the latest data."""
-        if self.plot_data:
-            self.curve.setData(self.plot_data)  # Update the plot with new data
+        """Update the plot with the latest data from both IDs."""
+        if self.plot_data_id1:
+            self.curve_id1.setData(self.plot_data_id1)  # Update the plot with data for ID 1
+        if self.plot_data_id2:
+            self.curve_id2.setData(self.plot_data_id2)  # Update the plot with data for ID 2

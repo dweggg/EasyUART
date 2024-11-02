@@ -91,7 +91,7 @@ class SerialInterface:
             index += 1
 
             # Decode data based on variable ID
-            if var_id == 2:  # Data ID specified in your example
+            if var_id == 1 or var_id == 2 :  # Data ID specified in your example
                 # Expecting a float value next
                 data_value = struct.unpack('<f', packet[index:index + 4])[0]  # Little-endian float
                 index += 4

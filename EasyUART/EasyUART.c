@@ -114,9 +114,8 @@ void buildAndSendPacket(EasyUART_Variable *variables, uint8_t *count, EasyUART_T
     uint8_t packet[PACKET_SIZE];
     uint8_t index = 0;
 
-    packet[index] = START_OF_FRAME;  // Start of frame
-
-    index += 2; // skip 1 byte to allocate data length
+    packet[index++] = START_OF_FRAME;  // Start of frame
+    packet[index++] = 0; // Placeholder for data length
 
     // Loop through the variables and add their data to the packet
     uint8_t data_length = 0;
@@ -145,19 +144,19 @@ void buildAndSendPacket(EasyUART_Variable *variables, uint8_t *count, EasyUART_T
                     index += sizeof(int);
                     data_length += sizeof(int);
                     break;
-                // Add cases for other types as needed
+                // Handle other types as necessary
             }
         }
     }
 
-    *count = data_length;  // Set count based on actual data length
-    packet[1] = *count;    // Set the count byte in the packet
-
+    // Update the length of the packet data
+    packet[1] = data_length; // Set the count byte in the packet
     packet[index++] = END_OF_FRAME;  // End of frame
 
     // Send the packet via UART
     HAL_UART_Transmit_IT(huart_EasyUART, packet, index);
 }
+
 
 
 // Function to update extended time based on 16-bit timer overflow
@@ -188,7 +187,7 @@ void run_EasyUART(void) {
     }
 
     if ((current_time - last_send_time_fast) >= SPEED_FAST) {
-//        buildAndSendPacket(fast_variables, &count, SPEED_FAST);
+        buildAndSendPacket(fast_variables, &count, SPEED_FAST);
         last_send_time_fast = current_time;
     }
 
