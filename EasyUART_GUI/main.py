@@ -5,4 +5,5 @@ if __name__ == "__main__":
     app = QtWidgets.QApplication([])
     window = EasyUARTApp()
     window.show()
-    app.exec_()
+    app.exec()
+    

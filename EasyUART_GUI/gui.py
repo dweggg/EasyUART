@@ -1,14 +1,21 @@
 from PyQt5 import QtWidgets, QtCore, QtGui
+from PyQt5.QtCore import pyqtSignal
 import pyqtgraph as pg
 from serial_interface import SerialInterface
 from database import Database
 import threading
+import struct
 
 class EasyUARTApp(QtWidgets.QMainWindow):
+    data_received_signal = pyqtSignal(str)  # Signal to emit received decoded data
+
     def __init__(self):
         super().__init__()
         self.setWindowTitle("EasyUART - Serial Port GUI")
         self.setGeometry(100, 100, 1000, 600)
+
+        # Connect the data_received_signal to the slot to update the GUI
+        self.data_received_signal.connect(self.update_serial_text_area)
 
         # Main widget and layout
         main_widget = QtWidgets.QWidget()
@@ -29,10 +36,14 @@ class EasyUARTApp(QtWidgets.QMainWindow):
         # Initialize Serial Interface
         self.serial_interface = SerialInterface()
         self.init_serial_interface()
-        
+
         # Initialize Database Editor
         self.database = Database()
-        self.init_database_editor()
+        # self.init_database_editor()
+
+        # Plotting related data
+        self.plot_data = [0] * 100
+        self.last_plot_time = 0
 
     def init_serial_interface(self):
         serial_layout = QtWidgets.QVBoxLayout(self.serial_tab)
@@ -41,12 +52,12 @@ class EasyUARTApp(QtWidgets.QMainWindow):
         port_frame = QtWidgets.QGroupBox("Serial Port Settings")
         serial_layout.addWidget(port_frame)
         port_layout = QtWidgets.QFormLayout(port_frame)
-        
+
         self.port_combobox = QtWidgets.QComboBox()
         self.port_combobox.addItems(self.serial_interface.list_ports())
         self.baud_combobox = QtWidgets.QComboBox()
-        self.baud_combobox.addItems(["9600", "115200", "19200"])
-        
+        self.baud_combobox.addItems(["slow", "fast", "very fast"])  # Updated baud rate options
+
         port_layout.addRow("Select Port:", self.port_combobox)
         port_layout.addRow("Baud Rate:", self.baud_combobox)
 
@@ -54,7 +65,7 @@ class EasyUARTApp(QtWidgets.QMainWindow):
         self.connect_button = QtWidgets.QPushButton("Connect")
         self.connect_button.clicked.connect(self.connect_serial)
         serial_layout.addWidget(self.connect_button)
-        
+
         # Serial data display
         self.serial_text_area = QtWidgets.QTextEdit()
         self.serial_text_area.setReadOnly(True)
@@ -70,7 +81,7 @@ class EasyUARTApp(QtWidgets.QMainWindow):
         # Status Bar
         self.status_bar = QtWidgets.QLabel("Status: Disconnected")
         serial_layout.addWidget(self.status_bar)
-        
+
         # Plot widget for live data
         self.plot_widget = pg.GraphicsLayoutWidget()
         self.plot_widget.setBackground('black')
@@ -82,35 +93,9 @@ class EasyUARTApp(QtWidgets.QMainWindow):
         serial_layout.addWidget(self.plot_widget)
 
         # Set up data for plotting
-        self.plot_data = [0] * 100
         self.plot_timer = QtCore.QTimer()
         self.plot_timer.timeout.connect(self.update_plot)
         self.plot_timer.start(100)
-
-    def init_database_editor(self):
-        db_layout = QtWidgets.QVBoxLayout(self.database_tab)
-
-        # Variable entry form
-        var_form = QtWidgets.QFormLayout()
-        self.var_name_entry = QtWidgets.QLineEdit()
-        self.db_baud_combobox = QtWidgets.QComboBox()
-        self.db_baud_combobox.addItems(["9600", "115200", "19200"])
-        self.data_type_combobox = QtWidgets.QComboBox()
-        self.data_type_combobox.addItems(["int", "float", "string"])
-        
-        var_form.addRow("Variable Name:", self.var_name_entry)
-        var_form.addRow("Baud Rate:", self.db_baud_combobox)
-        var_form.addRow("Data Type:", self.data_type_combobox)
-        db_layout.addLayout(var_form)
-
-        # Add variable button
-        self.add_variable_button = QtWidgets.QPushButton("Add Variable")
-        self.add_variable_button.clicked.connect(self.add_variable)
-        db_layout.addWidget(self.add_variable_button)
-
-        # List of variables
-        self.variable_list = QtWidgets.QListWidget()
-        db_layout.addWidget(self.variable_list)
 
     def connect_serial(self):
         if self.serial_interface.is_connected():
@@ -119,7 +104,8 @@ class EasyUARTApp(QtWidgets.QMainWindow):
             self.status_bar.setText("Status: Disconnected")
         else:
             port = self.port_combobox.currentText()
-            baudrate = int(self.baud_combobox.currentText())
+            baudrate_name = self.baud_combobox.currentText()
+            baudrate = Database.BAUD_RATES[baudrate_name]
             self.serial_interface.connect(port, baudrate)
             self.connect_button.setText("Disconnect")
             self.status_bar.setText(f"Status: Connected to {port} at {baudrate} baud")
@@ -129,8 +115,33 @@ class EasyUARTApp(QtWidgets.QMainWindow):
         while self.serial_interface.is_connected():
             data = self.serial_interface.read()
             if data:
-                self.serial_text_area.append(f"Received: {data}")
-                self.serial_text_area.moveCursor(QtGui.QTextCursor.End)
+                self.data_received_signal.emit(data)  # Emit the decoded message
+
+    def update_serial_text_area(self, text):
+        """Update the serial text area in the main GUI thread."""
+        self.serial_text_area.append(text)
+        self.serial_text_area.moveCursor(QtGui.QTextCursor.End)
+        
+        # Attempt to extract value for plotting
+        self.extract_and_plot_value(text)
+
+    def extract_and_plot_value(self, decoded_message):
+        """Extract value from the decoded message and update plot data."""
+        try:
+            lines = decoded_message.strip().split("\n")
+            for line in lines:
+                if "ID: 2" in line:  # Check for the specific ID
+                    value_str = line.split("|")[-1].split(":")[-1].strip()  # Extract the float value
+                    value = float(value_str)
+                    self.update_plot_data(value)  # Update plot with new value
+        except (ValueError, IndexError) as e:
+            print(f"Error extracting value: {e}")
+
+    def update_plot_data(self, value):
+        """Update the data for plotting."""
+        self.plot_data.append(value)
+        if len(self.plot_data) > 100:
+            self.plot_data.pop(0)  # Keep the last 100 data points
 
     def send_data(self):
         if self.serial_interface.is_connected():
@@ -139,16 +150,7 @@ class EasyUARTApp(QtWidgets.QMainWindow):
             self.serial_text_area.append(f"Sent: {data}")
             self.send_entry.clear()
 
-    def add_variable(self):
-        var_name = self.var_name_entry.text()
-        baud_rate = int(self.db_baud_combobox.currentText())
-        data_type = self.data_type_combobox.currentText()
-
-        if var_name:
-            self.database.add_variable(var_name, baud_rate, data_type)
-            self.variable_list.addItem(f"{var_name} - {baud_rate} - {data_type}")
-            self.var_name_entry.clear()
-
     def update_plot(self):
-        # Simulating real-time data; replace with actual data source
-        self.curve.setData(self.plot_data)
+        """Update the plot with the latest data."""
+        if self.plot_data:
+            self.curve.setData(self.plot_data)  # Update the plot with new data

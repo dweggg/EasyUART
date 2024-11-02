@@ -5,7 +5,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-// Define variable types for transmission
+#define MAX_DATA_SIZE  sizeof(float) // Adjust if you plan to support larger data types
+
 typedef enum {
     TYPE_INT,
     TYPE_FLOAT,
@@ -14,15 +15,20 @@ typedef enum {
     // Add more types as needed
 } EasyUART_VariableType;
 
+typedef enum {
+    SPEED_SLOW = 2,    // 2 seconds
+    SPEED_FAST = 10,    // 1 second
+    SPEED_VERY_FAST = 500, // 500 ms
+} EasyUART_TransmissionSpeed;
+
 typedef struct {
     EasyUART_VariableType type;
     uint8_t id;
-    void *data;  // Pointer to the variable data
+    uint8_t data[MAX_DATA_SIZE];  // Buffer to hold actual data
 } EasyUART_Variable;
 
-void init_EasyUART(UART_HandleTypeDef *huart, TIM_HandleTypeDef *htim);
-void send_EasyUART(void *data, uint8_t id, EasyUART_VariableType type);
+void init_EasyUART(UART_HandleTypeDef *huart);
+void send_EasyUART(uint8_t id, void *data);
 void run_EasyUART(void);
-void setTransmissionSpeed(uint32_t speed_ms);  // Set transmission speed
 
 #endif // EASYUART_H
