@@ -26,46 +26,35 @@ class SerialInterface:
         return self.serial_port is not None and self.serial_port.is_open
 
     def read(self):
-        """Read data from the serial port and decode packets."""
+        """Read data directly from the serial port and decode packets in real time."""
         try:
             while self.is_connected():
-                # Read a chunk of data from the serial port
-                raw_data = self.serial_port.read(self.serial_port.in_waiting or 1)
-                self.buffer.extend(raw_data)  # Append to the buffer
+                # Read one byte at a time
+                byte = self.serial_port.read(1)
+                if not byte:
+                    continue  # No data read, try again
 
-                # Process packets in the buffer
-                while True:
-                    # Check if we have a complete packet
-                    if len(self.buffer) < 2:  # At least SOF and EOF needed
-                        break
-                    
-                    # Check for SOF (0xAA)
-                    sof_index = self.buffer.find(b'\xAA')
-                    if sof_index == -1:  # No SOF found, clear buffer
-                        self.buffer.clear()
-                        break
-                    
-                    # Check for EOF (0x55)
-                    eof_index = self.buffer.find(b'\x55', sof_index)
-                    if eof_index == -1:  # No EOF found yet
-                        break
+                # Look for start of frame (SOF)
+                if byte == b'\xAA':
+                    packet = byte  # Start new packet
 
-                    # Ensure we have enough data between SOF and EOF
-                    if eof_index - sof_index < 1:  # There's no payload
-                        self.buffer.pop(0)  # Remove the SOF
-                        continue
-                    
-                    # Extract the packet
-                    packet = self.buffer[sof_index:eof_index + 1]
-                    self.buffer = self.buffer[eof_index + 1:]  # Remove the processed packet from buffer
+                    # Read until end of frame (EOF)
+                    while True:
+                        next_byte = self.serial_port.read(1)
+                        if not next_byte:
+                            continue  # Continue waiting for more data
 
-                    # Decode the packet
-                    result = self.decode_packet(packet.hex())
-                    return result  # Output the result
+                        packet += next_byte
+
+                        # Check for end of frame (EOF)
+                        if next_byte == b'\x55':
+                            # Process packet now
+                            result = self.decode_packet(packet.hex())
+                            return result
 
         except serial.SerialException as e:
+            self.disconnect()
             return f"Serial exception occurred: {e}"
-            self.disconnect()  # Optionally disconnect if an error occurs
         except Exception as e:
             return f"An error occurred: {e}"
 

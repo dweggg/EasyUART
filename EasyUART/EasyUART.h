@@ -19,7 +19,7 @@ typedef enum {
 typedef enum {
     SPEED_SLOW = 2000000,    // 2 seconds in microseconds
     SPEED_FAST = 1000000,    // 1 second in microseconds
-    SPEED_VERY_FAST = 500000, // 500 ms in microseconds
+    SPEED_VERY_FAST = 500, // 500us
 } EasyUART_TransmissionSpeed;
 
 typedef struct {
