@@ -6,25 +6,26 @@
 #define START_OF_FRAME 0xAA
 #define END_OF_FRAME 0x55
 
-static uint32_t CLOCK_FREQUENCY = 0;
-static uint8_t last_sent_packet[PACKET_SIZE] = {0};  // Store the last sent packet for debugging
-
-// Declare the UART handler
-static UART_HandleTypeDef *huart_EasyUART;  // UART handler
+// UART and Timer handler
+static UART_HandleTypeDef *huart_EasyUART;
+static TIM_HandleTypeDef *htim_EasyUART;
 
 // Fixed slot arrays for variable data
 static EasyUART_Variable slow_variables[MAX_VARIABLES] = {0};
 static EasyUART_Variable fast_variables[MAX_VARIABLES] = {0};
 static EasyUART_Variable very_fast_variables[MAX_VARIABLES] = {0};
 
-volatile static uint32_t current_time;
-
-// Time tracking for sending packets
-static uint32_t last_send_time_slow = 0;
-static uint32_t last_send_time_fast = 0;
-static uint32_t last_send_time_very_fast = 0;
-
+volatile static uint32_t last_send_time_slow = 0;
+volatile static uint32_t last_send_time_fast = 0;
+volatile static uint32_t last_send_time_very_fast = 0;
+volatile static uint32_t current_time = 0;
 // Variable dictionary that associates IDs with types and speeds
+
+// 32-bit time tracking variable to extend the timer
+volatile static uint32_t extended_time = 0;
+volatile static uint16_t last_timer_count = 0;
+
+
 static const struct {
     uint8_t id;
     EasyUART_VariableType type;
@@ -38,9 +39,34 @@ static const struct {
     // Add more entries as needed
 };
 
-void init_EasyUART(UART_HandleTypeDef *huart) {
+void configureMicrosecondTimer(TIM_HandleTypeDef *htim) {
+    // Assume the timer clock frequency is 84 MHz for APB1 timers on STM32F4 series
+    uint32_t timer_clock = HAL_RCC_GetPCLK1Freq();  // Get the APB1 clock frequency
+    uint32_t prescaler_value = (timer_clock / 1000000) - 1;  // Prescaler for 1 µs tick
+
+    htim->Instance = TIM4;  // Replace TIMx with the specific timer instance, e.g., TIM2, TIM3
+    htim->Init.Prescaler = prescaler_value;  // Set prescaler for 1 µs resolution
+    htim->Init.CounterMode = TIM_COUNTERMODE_UP;  // Count up mode
+    htim->Init.Period = 0xFFFF;  // Max period for 32-bit counter (or 0xFFFF for 16-bit)
+    htim->Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;  // No clock division
+    htim->Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;  // Disable preload
+
+    // Initialize the timer with the configuration above
+    if (HAL_TIM_Base_Init(htim) != HAL_OK) {
+        // Initialization Error
+    }
+
+    // Start the timer in basic mode (no interrupts)
+    if (HAL_TIM_Base_Start(htim) != HAL_OK) {
+        // Starting Error
+    }
+}
+
+void init_EasyUART(UART_HandleTypeDef *huart, TIM_HandleTypeDef *htim) {
     huart_EasyUART = huart;
-    CLOCK_FREQUENCY = HAL_RCC_GetHCLKFreq();
+    htim_EasyUART = htim;
+
+    configureMicrosecondTimer(htim_EasyUART);
 }
 
 void send_EasyUART(uint8_t id, void *data) {
@@ -125,45 +151,47 @@ void buildAndSendPacket(EasyUART_Variable *variables, uint8_t *count, EasyUART_T
     *count = data_length;  // Set count based on actual data length
     packet[1] = *count;    // Set the count byte in the packet
 
-    // Calculate checksum over the entire packet excluding the checksum byte
-//    uint8_t checksum = calculateChecksum(packet, index);
-//    packet[index++] = checksum;  // Append checksum to the packet
-
     packet[index++] = END_OF_FRAME;  // End of frame
 
-    // Store the last sent packet in the debug buffer
-    memcpy(last_sent_packet, packet, index);
-
     // Send the packet via UART
-    HAL_UART_Transmit(huart_EasyUART, packet, index, HAL_MAX_DELAY);
+    HAL_UART_Transmit_IT(huart_EasyUART, packet, index);
 }
+
+
+// Function to update extended time based on 16-bit timer overflow
+void updateExtendedTime() {
+    uint16_t current_timer_count = __HAL_TIM_GET_COUNTER(htim_EasyUART);
+
+    // Check for overflow
+    if (current_timer_count < last_timer_count) {
+        extended_time += 0x10000;  // Increment by 2^16 (65536) on overflow
+    }
+
+    last_timer_count = current_timer_count;
+
+    // Calculate the full 32-bit time in microseconds
+    current_time = extended_time + current_timer_count;
+}
+
 
 void run_EasyUART(void) {
-    // Calculate current time based on SysTick and system clock
-    current_time = SysTick->VAL;
+    // Update current_time by extending 16-bit timer to 32-bit
+    updateExtendedTime();
+
     static uint8_t count = 0;
 
-    // Send SLOW packet
-    if (current_time - last_send_time_slow >= (SPEED_SLOW * CLOCK_FREQUENCY / 1000000)) {
-        // buildAndSendPacket(slow_variables, &count, SPEED_SLOW);
+    if ((current_time - last_send_time_slow) >= SPEED_SLOW) {
+//        buildAndSendPacket(slow_variables, &count, SPEED_SLOW);
         last_send_time_slow = current_time;
-        memset(slow_variables, 0, sizeof(slow_variables)); // Clear variable data
     }
 
-    // Send FAST packet
-    if (current_time - last_send_time_fast >= (SPEED_FAST * CLOCK_FREQUENCY / 1000000)) {
-        // buildAndSendPacket(fast_variables, &count, SPEED_FAST);
+    if ((current_time - last_send_time_fast) >= SPEED_FAST) {
+//        buildAndSendPacket(fast_variables, &count, SPEED_FAST);
         last_send_time_fast = current_time;
-        memset(fast_variables, 0, sizeof(fast_variables)); // Clear variable data
     }
 
-    // Send VERY FAST packet
-    if (current_time - last_send_time_very_fast >= (SPEED_VERY_FAST * CLOCK_FREQUENCY / 1000000)) {
+    if ((current_time - last_send_time_very_fast) >= SPEED_VERY_FAST) {
         buildAndSendPacket(very_fast_variables, &count, SPEED_VERY_FAST);
         last_send_time_very_fast = current_time;
-        memset(very_fast_variables, 0, sizeof(very_fast_variables)); // Clear variable data
     }
 }
-
-// Global for debugging purposes
-volatile uint8_t *dbg_packet_ptr = last_sent_packet;  // Pointer to the last sent packet for debugging

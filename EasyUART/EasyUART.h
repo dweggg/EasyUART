@@ -8,6 +8,7 @@
 #define MAX_DATA_SIZE  sizeof(float) // Adjust if you plan to support larger data types
 
 typedef enum {
+    TYPE_NONE,
     TYPE_INT,
     TYPE_FLOAT,
     TYPE_BOOL,
@@ -16,9 +17,9 @@ typedef enum {
 } EasyUART_VariableType;
 
 typedef enum {
-    SPEED_SLOW = 2,    // 2 seconds
-    SPEED_FAST = 10,    // 1 second
-    SPEED_VERY_FAST = 500, // 500 ms
+    SPEED_SLOW = 2000000,    // 2 seconds in microseconds
+    SPEED_FAST = 1000000,    // 1 second in microseconds
+    SPEED_VERY_FAST = 500000, // 500 ms in microseconds
 } EasyUART_TransmissionSpeed;
 
 typedef struct {
@@ -27,7 +28,7 @@ typedef struct {
     uint8_t data[MAX_DATA_SIZE];  // Buffer to hold actual data
 } EasyUART_Variable;
 
-void init_EasyUART(UART_HandleTypeDef *huart);
+void init_EasyUART(UART_HandleTypeDef *huart, TIM_HandleTypeDef *htim);
 void send_EasyUART(uint8_t id, void *data);
 void run_EasyUART(void);
 
