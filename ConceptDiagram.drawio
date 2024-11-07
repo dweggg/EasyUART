@@ -13,7 +13,7 @@
         <mxCell id="EClyNgpZT3kYvuIJdLgy-38" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;Embedded program" style="rounded=0;whiteSpace=wrap;html=1;fontSize=18;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
           <mxGeometry x="410" y="-970" width="300" height="400" as="geometry" />
         </mxCell>
-        <mxCell id="EClyNgpZT3kYvuIJdLgy-37" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;EasyUART GUI" style="rounded=0;whiteSpace=wrap;html=1;fontSize=18;fillColor=#ffff88;strokeColor=#36393d;fontStyle=1" parent="1" vertex="1">
+        <mxCell id="EClyNgpZT3kYvuIJdLgy-37" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;ezUART GUI" style="rounded=0;whiteSpace=wrap;html=1;fontSize=18;fillColor=#ffff88;strokeColor=#36393d;fontStyle=1" parent="1" vertex="1">
           <mxGeometry x="80" y="-890" width="140" height="240" as="geometry" />
         </mxCell>
         <mxCell id="EClyNgpZT3kYvuIJdLgy-1" value="&lt;div&gt;Other peripherals&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;direction=north;fontSize=22;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
@@ -43,10 +43,10 @@
         <mxCell id="EClyNgpZT3kYvuIJdLgy-7" value="COM X" style="rounded=0;whiteSpace=wrap;html=1;fontSize=18;fillColor=#ffe6cc;strokeColor=#d79b00;" parent="1" vertex="1">
           <mxGeometry x="90" y="-920" width="120" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="EClyNgpZT3kYvuIJdLgy-8" value="EasyUART Interface" style="rounded=0;whiteSpace=wrap;html=1;fontSize=18;fillColor=#ffff88;strokeColor=#36393d;" parent="1" vertex="1">
+        <mxCell id="EClyNgpZT3kYvuIJdLgy-8" value="ezUART Interface" style="rounded=0;whiteSpace=wrap;html=1;fontSize=18;fillColor=#ffff88;strokeColor=#36393d;" parent="1" vertex="1">
           <mxGeometry x="90" y="-890" width="120" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="EClyNgpZT3kYvuIJdLgy-9" value="EasyUART Config Tool" style="rounded=0;whiteSpace=wrap;html=1;fontSize=18;fillColor=#ffff88;strokeColor=#36393d;" parent="1" vertex="1">
+        <mxCell id="EClyNgpZT3kYvuIJdLgy-9" value="ezUART Config Tool" style="rounded=0;whiteSpace=wrap;html=1;fontSize=18;fillColor=#ffff88;strokeColor=#36393d;" parent="1" vertex="1">
           <mxGeometry x="90" y="-770" width="120" height="80" as="geometry" />
         </mxCell>
         <mxCell id="EClyNgpZT3kYvuIJdLgy-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;endArrow=classic;endFill=1;startArrow=classic;startFill=1;" parent="1" source="EClyNgpZT3kYvuIJdLgy-2" target="EClyNgpZT3kYvuIJdLgy-5" edge="1">
@@ -84,7 +84,7 @@
         <mxCell id="EClyNgpZT3kYvuIJdLgy-28" value="" style="shape=corner;whiteSpace=wrap;html=1;rotation=-90;dx=103;dy=56;fillColor=#ffff88;strokeColor=#36393d;" parent="1" vertex="1">
           <mxGeometry x="420" y="-885.8" width="279.85" height="273.63" as="geometry" />
         </mxCell>
-        <mxCell id="EClyNgpZT3kYvuIJdLgy-29" value="EasyUART" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontStyle=1;fontSize=22;" parent="1" vertex="1">
+        <mxCell id="EClyNgpZT3kYvuIJdLgy-29" value="ezUART" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontStyle=1;fontSize=22;" parent="1" vertex="1">
           <mxGeometry x="495.0000000000001" y="-680" width="130" height="40" as="geometry" />
         </mxCell>
         <mxCell id="EClyNgpZT3kYvuIJdLgy-34" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0;entryDx=103;entryDy=164.815;entryPerimeter=0;endArrow=classic;endFill=1;startArrow=classic;startFill=1;" parent="1" source="EClyNgpZT3kYvuIJdLgy-4" target="EClyNgpZT3kYvuIJdLgy-28" edge="1">
@@ -103,7 +103,7 @@
             <mxPoint x="9" y="-11" as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="FRTwz7g_rq9uTpnmj-ga-1" value="EasyUART GUI should allow to&lt;div&gt;1. Plot, log, view, etc. variables sent with the EasyUART protocol (Interface)&lt;/div&gt;&lt;div&gt;2. Create and edit databases&lt;/div&gt;&lt;div&gt;3. Generate code (select target to use appropiate drivers, update MCU database, set baud rate...)&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+        <mxCell id="FRTwz7g_rq9uTpnmj-ga-1" value="ezUART GUI should allow to&lt;div&gt;1. Plot, log, view, etc. variables sent with the ezUART protocol (Interface)&lt;/div&gt;&lt;div&gt;2. Create and edit databases&lt;/div&gt;&lt;div&gt;3. Generate code (select target to use appropiate drivers, update MCU database, set baud rate...)&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
           <mxGeometry x="60" y="-520" width="540" height="70" as="geometry" />
         </mxCell>
       </root>
